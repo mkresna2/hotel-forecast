@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Occupancy Forecasting</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+    <!-- Add a modern font -->
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Add a CSS framework for faster styling -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="has-background-light">
+    <div class="container mt-5">
+        <div class="box">
+            <h1 class="title is-3 has-text-centered has-text-primary">Hotel Occupancy Forecasting</h1>
+            
+            <div class="upload-section">
+                <div class="file is-primary">
+                    <label class="file-label">
+                        <input class="file-input" type="file" id="fileInput" accept=".csv,.xlsx">
+                        <span class="file-cta">
+                            <span class="file-icon">
+                                <i class="fas fa-upload"></i>
+                            </span>
+                            <span class="file-label">
+                                Choose a file…
+                            </span>
+                        </span>
+                    </label>
+                </div>
+                <p class="help is-success" id="fileStatus"></p>
+            </div>
+
+            <div class="columns">
+                <!-- Model Parameters -->
+                <div class="column">
+                    <div class="box has-background-white p-4 shadow">
+                        <h2 class="subtitle has-text-primary">Model Parameters</h2>
+                        <div class="field">
+                            <label class="label">LSTM Units</label>
+                            <div class="control">
+                                <div class="slider-container">
+                                    <input class="slider" type="range" id="lstmUnits" min="16" max="128" value="64">
+                                    <span class="slider-value" id="unitsValue">64</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Learning Rate</label>
+                            <div class="control">
+                                <div class="select">
+                                    <select id="learningRate">
+                                        <option value="0.001">0.001</option>
+                                        <option value="0.01" selected>0.01</option>
+                                        <option value="0.1">0.1</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Sequence Length</label>
+                            <div class="control">
+                                <input class="input" type="number" id="sequenceLength" min="7" max="30" value="14">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Scenario Parameters -->
+                <div class="column">
+                    <div class="box has-background-white p-4 shadow">
+                        <h2 class="subtitle has-text-primary">Scenario Parameters</h2>
+                        <div class="field">
+                            <div class="control">
+                                <label class="checkbox">
+                                    <input type="checkbox" id="specialEvent">
+                                    <span class="checkmark"></span>
+                                    Special Event
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Seasonality (%)</label>
+                            <div class="control">
+                                <div class="slider-container">
+                                    <input class="slider" type="range" id="seasonality" min="-30" max="30" value="0">
+                                    <span class="slider-value" id="seasonalityValue">0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Future Days</label>
+                            <div class="control">
+                                <input class="input" type="number" id="futureDays" min="7" max="30" value="14">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field is-grouped is-grouped-centered mt-5">
+                <div class="control">
+                    <button class="button is-primary" id="btnTune">
+                        <span class="icon">
+                            <i class="fas fa-sliders"></i>
+                        </span>
+                        <span>Tune Model</span>
+                    </button>
+                </div>
+                <div class="control">
+                    <button class="button is-info" id="btnPredict">
+                        <span class="icon">
+                            <i class="fas fa-chart-line"></i>
+                        </span>
+                        <span>Generate Scenario</span>
+                    </button>
+                </div>
+                <div class="control">
+                    <button class="button is-danger" id="btnReset">
+                        <span class="icon">
+                            <i class="fas fa-undo"></i>
+                        </span>
+                        <span>Reset</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="box has-background-white p-4 shadow mt-5">
+                <h2 class="subtitle has-text-primary has-text-centered">Forecast Chart</h2>
+                <div class="chart-container">
+                    <canvas id="forecastChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading indicator -->
+    <div id="loading" class="loading is-hidden">
+        <div class="loader"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

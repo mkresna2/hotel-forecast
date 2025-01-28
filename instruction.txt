@@ -1,0 +1,1 @@
+npm install express @tensorflow/tfjs-node mysql2 multer xlsx csv-parser cors

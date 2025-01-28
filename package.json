@@ -1,0 +1,20 @@
+{
+  "name": "forecast",
+  "version": "1.0.0",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@tensorflow/tfjs": "^4.22.0",
+    "csv-parser": "^3.1.0",
+    "express": "^4.21.2",
+    "fs": "^0.0.1-security",
+    "node-gyp": "^11.0.0",
+    "pnpm": "^9.15.4"
+  }
+}
